@@ -13,9 +13,12 @@ export type contactType = {
 };
 
 export type postType = {
-    id: number;
+    _id?: number;
     title: string;
-    body: string;
+    text: string;
+    author: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 };
 
 export type socialsType = {

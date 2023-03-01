@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { contactType } from '../../types';
+import { contactType } from '../../types/types';
 
 type contactInfoProps = {
     contact: contactType;

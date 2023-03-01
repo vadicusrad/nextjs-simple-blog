@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import React, { FC } from 'react';
 import { GetStaticProps } from 'next';
-import { contactType } from '../../types';
+import { contactType } from '../../types/types';
 import { useRouter } from 'next/router';
 
 type contactsTypeProps = {

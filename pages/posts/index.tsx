@@ -3,7 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
-import { postType } from '../../types';
+import clientPromise from '../../lib/mongodb';
+import { postType } from '../../types/types';
 
 type postsTypeProps = {
     posts: postType[];
@@ -11,21 +12,37 @@ type postsTypeProps = {
 
 const Posts: FC<postsTypeProps> = ({ posts }) => {
     const router = useRouter();
+
     return (
         <div className='py-10'>
             <Head>
                 <title>Posts</title>
             </Head>
-            <h1 className='font-bold'>Post list</h1>
-            <ul>
+            <h1 className='font-semibold text-3xl mb-6'>Посты</h1>
+
+            <ul className=''>
                 {posts &&
-                    posts.map(({ id, title }) => (
-                        <li key={id}>
-                            <Link href={`/posts/${id}`}>{title}</Link>
+                    posts.map(({ _id, title, text, author }) => (
+                        <li
+                            key={_id}
+                            className='w-full h-40 border border-sky-500 mb-6 p-4 rounded-sm'
+                        >
+                            <Link href={`/posts/${_id}`}>
+                                <h2 className='font-semibold text-2xl mb-4 hover:text-amber-500 duration-300'>
+                                    {title}
+                                </h2>
+                                {/* createdAt.toLocaleDateString() */}
+                            </Link>
+                            <p className=''>{text}</p>
                         </li>
                     ))}
             </ul>
-            <button onClick={() => router.push('/')}>go to main</button>
+            <button
+                className='border p-2 hover:color-orange-500'
+                onClick={() => router.push('/')}
+            >
+                go to main
+            </button>
         </div>
     );
 };
@@ -33,18 +50,21 @@ const Posts: FC<postsTypeProps> = ({ posts }) => {
 export default Posts;
 
 export const getStaticProps: GetStaticProps = async () => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const data = await response.json();
+    try {
+        const client = await clientPromise;
+        const db = client.db('node-blog');
 
-    if (!data) {
+        const posts = await db
+            .collection('posts')
+            .find({})
+            .sort({ createdAt: -1 })
+            .limit(10)
+            .toArray();
+
         return {
-            notFound: true,
+            props: { posts: JSON.parse(JSON.stringify(posts)) },
         };
+    } catch (e) {
+        console.error(e);
     }
-
-    return {
-        props: {
-            posts: data,
-        },
-    };
 };

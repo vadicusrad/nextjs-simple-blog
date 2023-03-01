@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { FC } from 'react';
-import { socialsType } from '../../types';
+import { socialsType } from '../../types/types';
 
 type socialProps = {
     socials: socialsType[];
